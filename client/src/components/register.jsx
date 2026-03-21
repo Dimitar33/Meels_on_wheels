@@ -1,0 +1,45 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
+
+const API = "http://localhost:5000";
+
+export default function Register() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const register = async () => {
+    const res = await axios.post(`${API}/register`, {email, password})
+    navigate("/")
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white p-6 rounded-xl shadow-md w-80">
+        <h2 className="text-xl mb-4">Register</h2>
+
+        <input
+          className="border p-2 w-full mb-2"
+          placeholder="Email"
+          onChange={e => setEmail(e.target.value)}
+        />
+
+        <input
+          type="password"
+          className="border p-2 w-full mb-2"
+          placeholder="Password"
+          onChange={e => setPassword(e.target.value)}
+        />
+
+        <button
+          onClick={register}
+          className="bg-blue-500 text-white w-full p-2 rounded"
+        >
+          Register
+        </button>
+      </div>
+    </div>
+  );
+}
