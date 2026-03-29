@@ -12,6 +12,7 @@ const jwt = require("jsonwebtoken");
 const User = require("./models/User");
 const Note = require("./models/Note");
 const auth = require("./middleware/auth");
+const Meal = require("./models/Meal");
 
 const app = express();
 app.use(cors({ origin: true, credentials: true }));
@@ -30,6 +31,30 @@ app.post("/register", async (req, res) => {
   await user.save();
   res.json({ message: "User created" });
 });
+
+app.post("/meals", async (req, res) => {
+
+  try {
+    const meal = new Meal({ mealName: req.body.mealName, price: req.body.price, description: req.body.description, image: req.body.image });
+    await meal.save();
+    res.json({ message: "Meal created" });
+  
+  }catch(e){
+    console.error("New meal error", e)
+  }
+  
+});
+
+app.get("/meals", auth, async (req, res) => {
+  const meals = await Meal.find();
+  res.json(meals);
+});
+
+app.delete("/meals/:id", auth, async (req, res) => {
+  await Meal.findByIdAndDelete(req.params.id);
+  res.json({ message: "Deleted" });
+});
+
 
 app.post("/login", async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
@@ -78,5 +103,8 @@ app.delete("/notes/:id", auth, async (req, res) => {
   await Note.findByIdAndDelete(req.params.id);
   res.json({ message: "Deleted" });
 });
+
+// Meals CRUD
+
 
 app.listen(5000, () => console.log("Server running on port 5000"));

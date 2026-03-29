@@ -13,8 +13,8 @@ export default function Login({ setToken }) {
   const login = async () => {
     const res = await axios.post(`${API}/login`, { email, password }, { withCredentials: true });
     setToken(res.data.accessToken);
+    localStorage.setItem("token", res.data.accessToken)
     navigate("/menu");
-    console.log("TOKEN AFTER LOGIN:", res.data.accessToken);
   };
 
   return (

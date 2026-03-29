@@ -22,6 +22,8 @@ export default function Notes({ token }) {
 
   useEffect(() => { if (token) fetchNotes(); }, [token]);
 
+  
+
   return (
     <div className={dark ? "dark bg-gray-900 min-h-screen p-6" : "bg-gray-100 min-h-screen p-6"}>
       <div className="max-w-xl mx-auto">
