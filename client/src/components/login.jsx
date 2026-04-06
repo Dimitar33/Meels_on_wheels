@@ -41,6 +41,11 @@ export default function Login({ setToken }) {
         >
           Login
         </button>
+        <div className="card-footer">
+					<div className="d-flex justify-content-center links">
+						Don't have an account?<a className="register" href="register">Sign Up</a>
+					</div>
+				</div>
       </div>
     </div>
   );

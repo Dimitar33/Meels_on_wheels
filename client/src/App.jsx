@@ -9,6 +9,7 @@ import Notes from "./components/notes";
 import Menu from "./components/menu";
 import Meals from "./components/meals";
 import Navbar from "./components/navbar";
+import Bag from "./components/bag";
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/" element={<Login setToken={setToken} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/menu" element={token ? (<Menu token={token} bag={bag} setBag={setBag} setToken={setToken} />) : (<Navigate to="/" replace />)} />
+        <Route path="/bag" element={token ? (<Bag token={token} bag={bag} setBag={setBag} setToken={setToken} />) : (<Navigate to="/" replace />)} />
         <Route path="/meals" element={token ? (<Meals token={token} setToken={setToken} />) : (<Navigate to="/" replace />)} />
         <Route path="/notes" element={token ? (<Notes token={token} setToken={setToken} />) : (<Navigate to="/" replace />)} />
 

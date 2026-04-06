@@ -38,11 +38,10 @@ app.post("/meals", async (req, res) => {
     const meal = new Meal({ mealName: req.body.mealName, price: req.body.price, description: req.body.description, image: req.body.image });
     await meal.save();
     res.json({ message: "Meal created" });
-  
-  }catch(e){
+
+  } catch (e) {
     console.error("New meal error", e)
   }
-  
 });
 
 app.get("/meals", auth, async (req, res) => {
@@ -55,6 +54,34 @@ app.delete("/meals/:id", auth, async (req, res) => {
   res.json({ message: "Deleted" });
 });
 
+app.get("/meals/:id", auth, async (req, res) => {
+  const meal = await Meal.find(req.params.id)
+  res.json(meal)
+})
+
+app.get("/bag", auth, async (req, res) => {
+  const user = await User.findById(req.user.id).populate("bag.meal");
+  res.json(user.bag)
+})
+
+app.post("/bag", auth, async (req, res) => {
+  const user = await User.findById(req.user.id);
+  const dublicateMeal = user.bag.find(x => x.meal.toString() === req.body.item._id);
+
+  if (dublicateMeal) {
+    dublicateMeal.quantity += 1;
+  } else {
+    user.bag.push({ meal: req.body.item._id, quantity: 1 })
+  }
+
+  await user.save()
+})
+
+app.delete("/bag/:id", auth, async (req, res) => {
+  const user = await User.findById(req.user.id);
+  const meal = await User.bag.findByIdAndDelete(req.params.id)
+  console.log(meal)
+})
 
 app.post("/login", async (req, res) => {
   const user = await User.findOne({ email: req.body.email });

@@ -18,10 +18,13 @@ export default function navbar({ bagCount, setToken }) {
 
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                         <li className="nav-item">
-                            <a className="nav-link active" aria-current="page" href="/menu">Home</a>
+                            <a className="nav-link active" aria-current="page" href="/menu">Menu</a>
                         </li>
                         <li className="nav-item">
                             <a className="nav-link active" aria-current="page" href="/meals">Meals</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link active" aria-current="page" href="/notes">Notes</a>
                         </li>
                         <li className="nav-item">
                             <button onClick={logout} className="nav-link" href="#!">Logout</button>
@@ -29,11 +32,11 @@ export default function navbar({ bagCount, setToken }) {
                     </ul>
 
                     <form className="d-flex">
-                        <button className="btn btn-outline-dark" type="submit">
+                        <a className="btn btn-outline-dark" href="/bag">
                             <i className="bi-cart-fill me-1"></i>
-                            Cart
+                            Bag
                             <span className="badge bg-dark text-white ms-1 rounded-pill">{bagCount}</span>
-                        </button>
+                        </a>
                     </form>
 
                 </div>

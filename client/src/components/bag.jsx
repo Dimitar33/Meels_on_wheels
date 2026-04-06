@@ -5,78 +5,45 @@ import axios from "axios";
 
 const API = "http://localhost:5000";
 
-export default function Menu(token) {
+export default function Bag({ token, bag, setBag }) {
 
-    const [bag, setBag] = useState([]);
-
-    const addItem = async (item) => {
-        setBag(prev => [...prev, item]);
-       // await axios.post(`${API}/menu`, item, { headers: { Authorization: token } })
+    const fetchBag = async () => {
+        const res = await axios.get(`${API}/bag`, { headers: { Authorization: token } });
+        setBag(res.data);
     }
+
+    const removeFromBag = async (id) => {
+        const res = axios.delete(`${API}/bag/${id}`, { headers: { Authorization: token } });
+        fetchBag();
+    }
+
+    useEffect(() => { if (token) fetchBag(); }, [token])
 
     return (
         <>
-            {/* Navigation */}
-            <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-                <div className="container px-4 px-lg-5">
-                    <a className="navbar-brand" href="#!">Meels on wheels</a>
-
-                    <ul className="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                        <li className="nav-item">
-                            <a className="nav-link active" aria-current="page" href="#!">Home</a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" href="#!">Logout</a>
-                        </li>
-                    </ul>
-
-                    <form className="d-flex">
-                        <button className="btn btn-outline-dark" type="submit">
-                            <i className="bi-cart-fill me-1"></i>
-                            Cart
-                            <span className="badge bg-dark text-white ms-1 rounded-pill">{bag.length}</span>
-                        </button>
-                    </form>
-
-                </div>
-            </nav>
-
-            {/* Header */}
-            <header className="bg-dark py-5">
-                <div className="container px-4 px-lg-5 my-5">
-                    <div className="text-center text-white">
-                        <h1 className="display-4 fw-bolder">The best meels you can find!</h1>
-                        <p className="lead fw-normal text-white-50 mb-0">
-                            Healthy and tasty.
-                        </p>
-                    </div>
-                </div>
-            </header>
-
-            {/* Menu */}
 
             <section className="py-5">
                 <div className="container px-4 px-lg-5 mt-5">
                     <div className="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
 
-                        {menu.map((m, key) => (
+                        {bag.map((m, key) => (
                             <div key={key} className="col mb-5">
                                 <div className="card h-100">
                                     <img
                                         className="card-img-top"
-                                        src={m.image}
-                                        alt={m.name}
+                                        src={m.meal.image}
+                                        alt={m.meal.name}
                                     />
                                     <div className="card-body p-4">
                                         <div className="text-center">
-                                            <h5 className="fw-bolder">{m.name}</h5>
-                                            {m.description} <br />
-                                            ${m.price}
+                                            <h5 className="fw-bolder">{m.meal.mealName}</h5>
+                                            Count {m.quantity} <br />
+                                            Price ${m.meal.price * m.quantity}
                                         </div>
                                     </div>
                                     <div className="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                         <div className="text-center">
-                                            <button onClick={addItem} className="btn btn-outline-dark mt-auto" >Add to bag</button>
+                                            <button onClick={() => removeFromBag(m._id)} className="btn btn-outline-dark mt-auto" >Remove from bag</button>
                                         </div>
                                     </div>
                                 </div>
