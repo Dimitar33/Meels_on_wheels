@@ -5,15 +5,27 @@ import axios from "axios";
 
 const API = "http://localhost:5000";
 
-export default function Bag({ token, bag, setBag }) {
+export default function Bag({ token, bagCount, setBagCount }) {
+
+    const [bag, setBag] = useState([]);
+    const [totalPrice, setTotalPrice] = useState(0);
 
     const fetchBag = async () => {
         const res = await axios.get(`${API}/bag`, { headers: { Authorization: token } });
         setBag(res.data);
+        setBagCount(res.data.reduce((sum, meal) => sum += meal.quantity, 0));
+        setTotalPrice(res.data.reduce((sum, meal) => sum += (meal.quantity * meal.meal.price), 0));
+        console.log(totalPrice);
     }
+    console.log(totalPrice);
 
     const removeFromBag = async (id) => {
-        const res = axios.delete(`${API}/bag/${id}`, { headers: { Authorization: token } });
+        const res = await axios.delete(`${API}/bag/${id}`, { headers: { Authorization: token } });
+        fetchBag();
+    }
+
+    const order = async () => {
+        const res = await axios.get(`${API}/bag/order`, { headers: { Authorization: token } });
         fetchBag();
     }
 
@@ -48,9 +60,12 @@ export default function Bag({ token, bag, setBag }) {
                                     </div>
                                 </div>
                             </div>
-
                         ))}
-
+                    </div>
+                    <div className="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div className="text-center">
+                            <button onClick={() => order()} className="btn btn-success mt-auto" >Place order ${totalPrice.toFixed(2)}</button>
+                        </div>
                     </div>
                 </div>
             </section>

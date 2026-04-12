@@ -5,7 +5,7 @@ import axios from "axios";
 
 const API = "http://localhost:5000";
 
-export default function Login({ setToken }) {
+export default function Login({ setToken, setUser }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -13,6 +13,7 @@ export default function Login({ setToken }) {
   const login = async () => {
     const res = await axios.post(`${API}/login`, { email, password }, { withCredentials: true });
     setToken(res.data.accessToken);
+    setUser(res.data.user)
     localStorage.setItem("token", res.data.accessToken)
     navigate("/menu");
   };

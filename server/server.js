@@ -61,26 +61,39 @@ app.get("/meals/:id", auth, async (req, res) => {
 
 app.get("/bag", auth, async (req, res) => {
   const user = await User.findById(req.user.id).populate("bag.meal");
+ 
   res.json(user.bag)
 })
 
 app.post("/bag", auth, async (req, res) => {
   const user = await User.findById(req.user.id);
-  const dublicateMeal = user.bag.find(x => x.meal.toString() === req.body.item._id);
-
+  const dublicateMeal = await user.bag.find(x => x.meal.toString() === req.body["mealId"]);
+ 
   if (dublicateMeal) {
     dublicateMeal.quantity += 1;
   } else {
-    user.bag.push({ meal: req.body.item._id, quantity: 1 })
+    user.bag.push({ meal: req.body["mealId"], quantity: 1 })
   }
-
+  
   await user.save()
+  res.json(user.bag)
+})
+
+app.get("/bag/order", auth, async (req, res) => {
+  const user = await User.findById(req.user.id);
+  user.bag = [];
+  
+  await user.save()
+  res.json(user.bag)
 })
 
 app.delete("/bag/:id", auth, async (req, res) => {
-  const user = await User.findById(req.user.id);
-  const meal = await User.bag.findByIdAndDelete(req.params.id)
-  console.log(meal)
+  const user = await User.findByIdAndUpdate(req.user.id, 
+    {
+      $pull: {bag: { _id: req.params.id}}
+    }
+  )
+  res.json(user.bag)
 })
 
 app.post("/login", async (req, res) => {
@@ -94,7 +107,7 @@ app.post("/login", async (req, res) => {
   const refreshToken = jwt.sign({ id: user._id }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
 
   res.cookie("refreshToken", refreshToken, { httpOnly: true, sameSite: "strict" });
-  res.json({ accessToken });
+  res.json({ accessToken, user: {id: user.id, email: user.email, isAdmin: user.isAdmin} });
 });
 
 app.post("/refresh", (req, res) => {

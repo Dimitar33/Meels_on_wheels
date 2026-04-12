@@ -1,13 +1,11 @@
 import React, { useEffect } from "react";
-import menu from "../lib/meals.jsx"
 import { useState } from "react";
 import axios from "axios";
-import Navbar from "./navbar.jsx";
 import Footer from "./footer.jsx";
 
 const API = "http://localhost:5000";
 
-export default function Menu({ token, bag, setBag }) {
+export default function Menu({ token, setBagCount }) {
 
     const [meals, setMeals] = useState([]);
 
@@ -16,12 +14,17 @@ export default function Menu({ token, bag, setBag }) {
         setMeals(res.data)
     }
 
-    const addToBag = async (item) => {
-        setBag(prev => [...prev, item]);
-        await axios.post(`${API}/bag`, { item }, { headers: { Authorization: token } })
+      const fetchBag = async () => {
+        const res = await axios.get(`${API}/bag`, { headers: { Authorization: token } });
+        setBagCount(res.data.reduce((sum, meal) => sum += meal.quantity, 0));
     }
 
-    useEffect(() => { if (token) fetchMeals(); }, [token])
+    const addToBag = async (item) => {
+        await axios.post(`${API}/bag`, { mealId: item._id }, { headers: { Authorization: token } })
+        setBagCount(count => count + 1);
+    }
+
+    useEffect(() => { if (token) fetchMeals(); fetchBag(); }, [token])
 
     return (
         <>

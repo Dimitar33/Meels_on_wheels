@@ -1,7 +1,7 @@
 import React from "react"
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-export default function navbar({ bagCount, setToken }) {
+export default function navbar({ bagCount, setToken, user }) {
 
     const navigate = useNavigate();
     const logout = () => {
@@ -18,25 +18,32 @@ export default function navbar({ bagCount, setToken }) {
 
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                         <li className="nav-item">
-                            <a className="nav-link active" aria-current="page" href="/menu">Menu</a>
+                            <Link className="nav-link active" aria-current="page" to="/menu">Menu</Link>
                         </li>
-                        <li className="nav-item">
-                            <a className="nav-link active" aria-current="page" href="/meals">Meals</a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link active" aria-current="page" href="/notes">Notes</a>
-                        </li>
-                        <li className="nav-item">
-                            <button onClick={logout} className="nav-link" href="#!">Logout</button>
-                        </li>
+                        {user?.isAdmin ? (
+                            <>
+                                <li className="nav-item">
+                                    <Link className="nav-link active" aria-current="page" to="/meals">Meals</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link active" aria-current="page" to="/notes">Notes</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <button onClick={logout} className="nav-link" to="#!">Logout</button>
+                                </li></>) : (
+
+                            <li className="nav-item">
+                                <button onClick={logout} className="nav-link" to="#!">Logout</button>
+                            </li>
+                        )}
                     </ul>
 
                     <form className="d-flex">
-                        <a className="btn btn-outline-dark" href="/bag">
+                        <Link className="btn btn-outline-dark" to="/bag">
                             <i className="bi-cart-fill me-1"></i>
                             Bag
                             <span className="badge bg-dark text-white ms-1 rounded-pill">{bagCount}</span>
-                        </a>
+                        </Link>
                     </form>
 
                 </div>
