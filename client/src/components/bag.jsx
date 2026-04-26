@@ -2,6 +2,7 @@ import React from "react";
 import menu from "../lib/meals.jsx"
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Footer from "./footer.jsx";
 
 const API = "http://localhost:5000";
 
@@ -15,9 +16,7 @@ export default function Bag({ token, bagCount, setBagCount }) {
         setBag(res.data);
         setBagCount(res.data.reduce((sum, meal) => sum += meal.quantity, 0));
         setTotalPrice(res.data.reduce((sum, meal) => sum += (meal.quantity * meal.meal.price), 0));
-        console.log(totalPrice);
     }
-    console.log(totalPrice);
 
     const removeFromBag = async (id) => {
         const res = await axios.delete(`${API}/bag/${id}`, { headers: { Authorization: token } });
@@ -70,14 +69,7 @@ export default function Bag({ token, bagCount, setBagCount }) {
                 </div>
             </section>
 
-            {/* Footer */}
-            <footer className="py-5 bg-dark">
-                <div className="container">
-                    <p className="m-0 text-center text-white">
-                        Copyright &copy; <a target="_blank" href="https://petkov-it.com/">Dimitar Petkov</a>
-                    </p>
-                </div>
-            </footer>
+             <Footer />
         </>
     );
 }

@@ -13,6 +13,7 @@ const User = require("./models/User");
 const Note = require("./models/Note");
 const auth = require("./middleware/auth");
 const Meal = require("./models/Meal");
+const Order = require("./models/Order");
 
 const app = express();
 app.use(cors({ origin: true, credentials: true }));
@@ -61,36 +62,53 @@ app.get("/meals/:id", auth, async (req, res) => {
 
 app.get("/bag", auth, async (req, res) => {
   const user = await User.findById(req.user.id).populate("bag.meal");
- 
+
   res.json(user.bag)
 })
 
 app.post("/bag", auth, async (req, res) => {
   const user = await User.findById(req.user.id);
   const dublicateMeal = await user.bag.find(x => x.meal.toString() === req.body["mealId"]);
- 
+
   if (dublicateMeal) {
     dublicateMeal.quantity += 1;
   } else {
     user.bag.push({ meal: req.body["mealId"], quantity: 1 })
   }
-  
+
   await user.save()
   res.json(user.bag)
 })
 
 app.get("/bag/order", auth, async (req, res) => {
-  const user = await User.findById(req.user.id);
+  const user = await User.findById(req.user.id).populate("bag.meal");
+
+  const order = new Order({ user: req.user.id });
+  let total = 0;
+
+  user.bag.forEach(m => {
+
+    order.meals.push({ meal: m._id, quantity: m.quantity, price: m.meal.price * m.quantity })
+    total += m.meal.price * m.quantity;
+  });
+
+  order.total = total.toFixed(2);
   user.bag = [];
-  
+
   await user.save()
+  await order.save()
   res.json(user.bag)
 })
 
+app.get("/orders", async(req, res) => {
+  const orders = await Order.find().populate("meals.meal");
+  res.json(orders);
+})
+
 app.delete("/bag/:id", auth, async (req, res) => {
-  const user = await User.findByIdAndUpdate(req.user.id, 
+  const user = await User.findByIdAndUpdate(req.user.id,
     {
-      $pull: {bag: { _id: req.params.id}}
+      $pull: { bag: { _id: req.params.id } }
     }
   )
   res.json(user.bag)
@@ -107,7 +125,7 @@ app.post("/login", async (req, res) => {
   const refreshToken = jwt.sign({ id: user._id }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
 
   res.cookie("refreshToken", refreshToken, { httpOnly: true, sameSite: "strict" });
-  res.json({ accessToken, user: {id: user.id, email: user.email, isAdmin: user.isAdmin} });
+  res.json({ accessToken, user: { id: user.id, email: user.email, isAdmin: user.isAdmin } });
 });
 
 app.post("/refresh", (req, res) => {

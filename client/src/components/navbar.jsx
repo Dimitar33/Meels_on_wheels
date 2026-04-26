@@ -26,7 +26,7 @@ export default function navbar({ bagCount, setToken, user }) {
                                     <Link className="nav-link active" aria-current="page" to="/meals">Meals</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link active" aria-current="page" to="/notes">Notes</Link>
+                                    <Link className="nav-link active" aria-current="page" to="/sales">Sales</Link>
                                 </li>
                                 <li className="nav-item">
                                     <button onClick={logout} className="nav-link" to="#!">Logout</button>
