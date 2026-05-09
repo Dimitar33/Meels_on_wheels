@@ -1,0 +1,17 @@
+node_modules
+client/node_modules
+.env
+.env.local
+.env.*.local
+client/dist/
+client/build/
+logs/
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+coverage/
+*.lcov
+.vite/
