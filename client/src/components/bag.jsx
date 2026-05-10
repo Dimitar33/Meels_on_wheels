@@ -1,12 +1,11 @@
 import React from "react";
-import menu from "../lib/meals.jsx"
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Footer from "./footer.jsx";
 
 const API = "http://localhost:5000";
 
-export default function Bag({ token, bagCount, setBagCount }) {
+export default function Bag({ token, setBagCount }) {
 
     const [bag, setBag] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);

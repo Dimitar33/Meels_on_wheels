@@ -1,24 +1,15 @@
 import React from "react";
-import menu from "../lib/meals.jsx"
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Footer from "./footer.jsx";
 
 const API = "http://localhost:5000";
 
-export default function Sales({ token, bagCount, setBagCount }) {
+export default function Sales({ token }) {
 
-    const [bag, setBag] = useState([]);
     const [orders, setOrders] = useState([]);
     const [income, setIncome] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
-
-    const fetchBag = async () => {
-        const res = await axios.get(`${API}/bag`, { headers: { Authorization: token } });
-        setBag(res.data);
-        setBagCount(res.data.reduce((sum, meal) => sum += meal.quantity, 0));
-        setTotalPrice(res.data.reduce((sum, meal) => sum += (meal.quantity * meal.meal.price), 0));
-    }
 
     const fetchOrders = async () => {
         const res = await axios.get(`${API}/orders`, { headers: { Authorization: token } });
@@ -26,13 +17,10 @@ export default function Sales({ token, bagCount, setBagCount }) {
         setIncome(res.data.reduce((sum, order) => sum += order.total, 0));
     }
 
-
-
     useEffect(() => { if (token) fetchOrders(); }, [token])
 
     return (
         <>
-
             <section className="py-5">
                 <div className="container px-4 px-lg-5 mt-5">
                     <div className="row gx-4 gx-lg-5 row-cols-1 row-cols-sm-2  row-cols-md-3 row-cols-xl-4 justify-content-center">
@@ -44,7 +32,7 @@ export default function Sales({ token, bagCount, setBagCount }) {
                                     <strong>Order #{index + 1}</strong> <br />
                                     User: {order.user} <br />
                                     Date: {new Date(order.created).toLocaleString()} <br />
-                                    Total: ${order.total}
+                                    Total: ${order.total.toFixed(2)}
                                 </div>
                             </div>
                         ))}

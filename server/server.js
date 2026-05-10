@@ -33,30 +33,29 @@ app.post("/register", async (req, res) => {
   res.json({ message: "User created" });
 });
 
-app.post("/meals", async (req, res) => {
-
-  try {
-    const meal = new Meal({ mealName: req.body.mealName, price: req.body.price, description: req.body.description, image: req.body.image });
-    await meal.save();
-    res.json({ message: "Meal created" });
-
-  } catch (e) {
-    console.error("New meal error", e)
-  }
-});
-
 app.get("/meals", auth, async (req, res) => {
   const meals = await Meal.find();
+
   res.json(meals);
+});
+
+app.post("/meals", async (req, res) => {
+
+  const meal = new Meal({ mealName: req.body.mealName, price: req.body.price, description: req.body.description, image: req.body.image });
+  await meal.save();
+  res.json({ message: "Meal created" });
+
 });
 
 app.delete("/meals/:id", auth, async (req, res) => {
   await Meal.findByIdAndDelete(req.params.id);
+
   res.json({ message: "Deleted" });
 });
 
 app.get("/meals/:id", auth, async (req, res) => {
   const meal = await Meal.find(req.params.id)
+
   res.json(meal)
 })
 
@@ -80,6 +79,16 @@ app.post("/bag", auth, async (req, res) => {
   res.json(user.bag)
 })
 
+app.delete("/bag/:id", auth, async (req, res) => {
+  
+  const user = await User.findByIdAndUpdate(req.user.id,
+    {
+      $pull: { bag: { _id: req.params.id } }
+    }
+  )
+  res.json(user.bag)
+})
+
 app.get("/bag/order", auth, async (req, res) => {
   const user = await User.findById(req.user.id).populate("bag.meal");
 
@@ -88,30 +97,22 @@ app.get("/bag/order", auth, async (req, res) => {
 
   user.bag.forEach(m => {
 
-    order.meals.push({ meal: m._id, quantity: m.quantity, price: m.meal.price * m.quantity })
     total += m.meal.price * m.quantity;
   });
 
-  order.total = total.toFixed(2);
+  order.total = total;
   user.bag = [];
 
   await user.save()
   await order.save()
+  
   res.json(user.bag)
 })
 
-app.get("/orders", async(req, res) => {
-  const orders = await Order.find().populate("meals.meal");
+app.get("/orders", async (req, res) => {
+  
+  const orders = await Order.find();
   res.json(orders);
-})
-
-app.delete("/bag/:id", auth, async (req, res) => {
-  const user = await User.findByIdAndUpdate(req.user.id,
-    {
-      $pull: { bag: { _id: req.params.id } }
-    }
-  )
-  res.json(user.bag)
 })
 
 app.post("/login", async (req, res) => {
@@ -162,7 +163,6 @@ app.delete("/notes/:id", auth, async (req, res) => {
   res.json({ message: "Deleted" });
 });
 
-// Meals CRUD
 
 
 app.listen(5000, () => console.log("Server running on port 5000"));

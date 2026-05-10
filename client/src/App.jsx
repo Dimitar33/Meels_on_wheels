@@ -20,7 +20,6 @@ export default function App() {
   // router built with the help of AI
   return (
 
-
     <BrowserRouter>
 
       {token && <Navbar setToken={setToken} bagCount={bagCount} user={user} />}
@@ -29,11 +28,10 @@ export default function App() {
 
         <Route path="/" element={<Login setToken={setToken} setUser={setUser} />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/menu" element={token ? (<Menu token={token} bagCount={bagCount} setBagCount={setBagCount} setToken={setToken} />) : (<Navigate to="/" replace />)} />
-        <Route path="/bag" element={token ? (<Bag token={token} bagCount={bagCount} setBagCount={setBagCount} setToken={setToken} />) : (<Navigate to="/" replace />)} />
-        <Route path="/sales" element={token ? (<Sales token={token} bagCount={bagCount} setBagCount={setBagCount} setToken={setToken} />) : (<Navigate to="/" replace />)} />
-        <Route path="/meals" element={token ? (<Meals token={token} setToken={setToken} />) : (<Navigate to="/" replace />)} />
-        <Route path="/notes" element={token ? (<Notes token={token} setToken={setToken} />) : (<Navigate to="/" replace />)} />
+        <Route path="/menu" element={token ? (<Menu token={token} setBagCount={setBagCount} />) : (<Navigate to="/" replace />)} />
+        <Route path="/bag" element={token ? (<Bag token={token} setBagCount={setBagCount} />) : (<Navigate to="/" replace />)} />
+        <Route path="/sales" element={token ? (<Sales token={token} />) : (<Navigate to="/" replace />)} />
+        <Route path="/meals" element={token ? (<Meals token={token} />) : (<Navigate to="/" replace />)} />
 
       </Routes>
     </BrowserRouter>

@@ -1,7 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Navbar from "./navbar.jsx";
 import Footer from "./footer.jsx";
 
 
@@ -21,11 +20,11 @@ export default function Meals({ token }) {
 
   const addMeal = async () => {
     const res = await axios.post(`${API}/meals`, { mealName, price, description, image }, { headers: { Authorization: token } });
-    console.log(image)
     fetchMeals()
   }
 
   const deleteMeal = async (id) => {
+
     const res = await axios.delete(`${API}/meals/${id}`, { headers: { Authorization: token } });
     fetchMeals()
   }
